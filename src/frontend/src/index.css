@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+    /* Dark tech theme */
+    --background: 0.108 0.012 240;
+    --foreground: 0.93 0.01 240;
+    --card: 0.13 0.014 240;
+    --card-foreground: 0.93 0.01 240;
+    --popover: 0.14 0.015 240;
+    --popover-foreground: 0.93 0.01 240;
+    --primary: 0.72 0.18 55;
+    --primary-foreground: 0.1 0.01 240;
+    --secondary: 0.18 0.015 240;
+    --secondary-foreground: 0.93 0.01 240;
+    --muted: 0.18 0.015 240;
+    --muted-foreground: 0.6 0.02 240;
+    --accent: 0.72 0.18 55;
+    --accent-foreground: 0.1 0.01 240;
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+    --border: 0.25 0.02 240;
+    --input: 0.25 0.02 240;
+    --ring: 0.72 0.18 55;
+    --chart-1: 0.72 0.18 55;
+    --chart-2: 0.6 0.15 55;
+    --chart-3: 0.82 0.15 85;
+    --chart-4: 0.65 0.22 30;
+    --chart-5: 0.77 0.19 70;
+    --sidebar: 0.13 0.014 240;
+    --sidebar-foreground: 0.93 0.01 240;
+    --sidebar-primary: 0.72 0.18 55;
+    --sidebar-primary-foreground: 0.1 0.01 240;
+    --sidebar-accent: 0.18 0.015 240;
+    --sidebar-accent-foreground: 0.93 0.01 240;
+    --sidebar-border: 0.25 0.02 240;
+    --sidebar-ring: 0.72 0.18 55;
+
+    /* Custom brand */
+    --orange: 0.72 0.18 55;
+    --orange-hover: 0.62 0.2 47;
+    --gold: 0.78 0.15 85;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    background-color: #0b0f14;
+  }
+}
+
+/* Circuit board background pattern */
+.circuit-bg {
+  background-color: #0b0f14;
+  background-image: linear-gradient(
+      rgba(242, 154, 46, 0.03) 1px,
+      transparent 1px
+    ), linear-gradient(90deg, rgba(242, 154, 46, 0.03) 1px, transparent 1px),
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(242, 154, 46, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(242, 154, 46, 0.04) 0%,
+      transparent 40%
+    );
+  background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+}
+
+.orange-glow {
+  box-shadow: 0 0 20px rgba(242, 154, 46, 0.3), 0 0 40px rgba(242, 154, 46, 0.1);
+}
+
+.card-glow {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 1px rgba(242, 154, 46, 0.2)
+    inset;
+}
+
+.text-orange {
+  color: #f29a2e;
+}
+
+.bg-orange {
+  background-color: #f29a2e;
+}
+
+.border-orange {
+  border-color: #f29a2e;
+}
+
+.btn-orange {
+  background-color: #f29a2e;
+  color: #0b0f14;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.btn-orange:hover {
+  background-color: #d9791e;
+  box-shadow: 0 0 16px rgba(242, 154, 46, 0.4);
+}
+
+.btn-outline-orange {
+  border: 2px solid #f29a2e;
+  color: #f29a2e;
+  background: transparent;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.btn-outline-orange:hover {
+  background-color: rgba(242, 154, 46, 0.1);
+  box-shadow: 0 0 16px rgba(242, 154, 46, 0.2);
+}
+
+.star-filled {
+  color: #f5c542;
+}
+
+/* Cart sidebar */
+.cart-sidebar {
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.cart-sidebar.open {
+  transform: translateX(0);
+}
