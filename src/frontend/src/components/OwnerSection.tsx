@@ -54,7 +54,7 @@ export default function OwnerSection() {
             <div className="flex items-center gap-2 justify-center sm:justify-start">
               <MapPin size={16} className="text-orange" />
               <span className="text-muted-foreground text-sm">
-                Bhavarkua, Indore
+                Bhawarkua, Indore
               </span>
             </div>
           </div>

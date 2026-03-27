@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import type { MenuItem } from "../backend";
 import { CATEGORIES, type MenuItemData } from "../data/menuData";
+import { useRipple } from "../hooks/useRipple";
 import DishDetailModal from "./DishDetailModal";
 
 interface MenuSectionProps {
@@ -48,6 +49,7 @@ export default function MenuSection({
 }: MenuSectionProps) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedItem, setSelectedItem] = useState<EnrichedItem | null>(null);
+  const createRipple = useRipple();
 
   const enriched: EnrichedItem[] = localMenu.map((local) => {
     const backend = menuItems.find((m) => m.name === local.name);
@@ -67,7 +69,11 @@ export default function MenuSection({
 
   return (
     <>
-      <section id="menu" className="py-20 circuit-bg">
+      <section
+        id="menu"
+        className="py-20 circuit-bg"
+        style={{ scrollMarginTop: "80px" }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -84,27 +90,47 @@ export default function MenuSection({
             </p>
           </motion.div>
 
-          <div className="flex flex-wrap gap-2 justify-center mb-10">
+          <motion.div
+            className="flex flex-wrap gap-2 justify-center mb-10"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
             {CATEGORIES.map((cat) => (
-              <button
+              <motion.button
                 key={cat}
                 type="button"
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat ? "btn-orange" : "border border-border text-muted-foreground hover:border-orange/50 hover:text-orange"}`}
+                onMouseDown={createRipple}
+                className={`relative overflow-hidden px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeCategory === cat
+                    ? "btn-orange"
+                    : "border border-border text-muted-foreground hover:border-orange/50 hover:text-orange"
+                }`}
+                whileHover={{ scale: 1.07 }}
+                whileTap={{ scale: 0.94 }}
               >
                 {cat}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map((item, idx) => (
               <motion.div
                 key={item.name}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: (idx % 8) * 0.05 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ delay: (idx % 8) * 0.06, duration: 0.45 }}
+                whileHover={{
+                  y: -6,
+                  scale: 1.025,
+                  boxShadow:
+                    "0 16px 48px rgba(0,0,0,0.5), 0 0 24px rgba(242,154,46,0.2)",
+                  transition: { duration: 0.2 },
+                }}
                 className="rounded-xl overflow-hidden card-glow border border-border/50 flex flex-col group cursor-pointer"
                 style={{ background: "#171C22" }}
                 onClick={() => setSelectedItem(item)}
@@ -113,7 +139,7 @@ export default function MenuSection({
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
                       (
@@ -141,15 +167,22 @@ export default function MenuSection({
                     </span>
                   </div>
                   <div className="absolute bottom-2 right-2">
-                    <span className="bg-orange text-white text-sm font-extrabold px-3 py-1 rounded-full shadow-lg">
+                    <motion.span
+                      className="bg-orange text-white text-sm font-extrabold px-3 py-1 rounded-full shadow-lg block"
+                      whileHover={{ scale: 1.1 }}
+                    >
                       ₹{item.price}
-                    </span>
+                    </motion.span>
                   </div>
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white text-sm font-bold bg-orange/80 px-3 py-1 rounded-full">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                    <motion.span
+                      className="text-white text-sm font-bold bg-orange/80 px-3 py-1 rounded-full"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                    >
                       View Details
-                    </span>
+                    </motion.span>
                   </div>
                 </div>
                 <div className="p-4 flex flex-col flex-1">
@@ -161,8 +194,9 @@ export default function MenuSection({
                   </p>
                   <div className="flex items-center justify-between">
                     <StarRating rating={item.rating} />
-                    <button
+                    <motion.button
                       type="button"
+                      onMouseDown={createRipple}
                       onClick={(e) => {
                         e.stopPropagation();
                         if (item.backendItem) onAddToCart(item.backendItem);
@@ -170,11 +204,13 @@ export default function MenuSection({
                       disabled={
                         !item.hasBackend || addingIds.has(String(item.id))
                       }
-                      className="btn-orange px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 disabled:opacity-50"
+                      className="relative overflow-hidden btn-orange px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 disabled:opacity-50"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       <Plus size={12} />
                       {addingIds.has(String(item.id)) ? "Adding..." : "Add"}
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               </motion.div>

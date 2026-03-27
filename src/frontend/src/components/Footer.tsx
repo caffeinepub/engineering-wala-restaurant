@@ -1,10 +1,15 @@
+import { motion } from "motion/react";
 import { SiFacebook, SiInstagram, SiX } from "react-icons/si";
 
 const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 };
 
-export default function Footer() {
+interface FooterProps {
+  onOwnerAccess?: () => void;
+}
+
+export default function Footer({ onOwnerAccess }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
@@ -17,7 +22,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
+            <motion.div
+              className="flex items-center gap-2 mb-4"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <div className="w-10 h-10 rounded-full btn-orange flex items-center justify-center font-display font-bold text-sm">
                 EW
               </div>
@@ -25,7 +36,7 @@ export default function Footer() {
                 <span className="text-orange">Engineering</span>{" "}
                 <span className="text-foreground">Wala</span>
               </div>
-            </div>
+            </motion.div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Indore's most deliciously engineered food. Crafted with precision,
               served with love.
@@ -42,17 +53,23 @@ export default function Footer() {
                 { label: "Menu", id: "menu" },
                 { label: "About Us", id: "about" },
                 { label: "Contact", id: "contact" },
-              ].map((link) => (
-                <li key={link.label}>
+              ].map((link, i) => (
+                <motion.li
+                  key={link.label}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.07 }}
+                >
                   <button
                     type="button"
                     onClick={() => scrollTo(link.id)}
-                    className="text-sm text-muted-foreground hover:text-orange transition-colors"
+                    className="nav-link-anim text-sm text-muted-foreground hover:text-orange transition-colors"
                     data-ocid={`footer.${link.id}.link`}
                   >
                     {link.label}
                   </button>
-                </li>
+                </motion.li>
               ))}
             </ul>
           </div>
@@ -84,15 +101,17 @@ export default function Footer() {
                 { Icon: SiFacebook, label: "Facebook", href: "#" },
                 { Icon: SiX, label: "Twitter", href: "#" },
               ].map(({ Icon, label, href }) => (
-                <a
+                <motion.a
                   key={label}
                   href={href}
                   aria-label={label}
                   className="w-9 h-9 rounded-full border border-border/50 flex items-center justify-center text-muted-foreground hover:text-orange hover:border-orange/50 transition-all"
                   data-ocid={`footer.${label.toLowerCase()}.link`}
+                  whileHover={{ scale: 1.2, y: -3 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <Icon size={16} />
-                </a>
+                </motion.a>
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -101,10 +120,20 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border/30 pt-6 flex items-center justify-center">
+        <div className="border-t border-border/30 pt-6 flex flex-col items-center gap-2">
           <p className="text-xs text-muted-foreground">
             © {year} Engineering Wala. All Rights Reserved.
           </p>
+          {/* Owner access trigger (mobile-friendly, very subtle) */}
+          <button
+            type="button"
+            onClick={onOwnerAccess}
+            className="text-xs opacity-20 hover:opacity-50 transition-opacity text-muted-foreground"
+            data-ocid="footer.owner.button"
+            aria-label="Owner access"
+          >
+            Owner
+          </button>
         </div>
       </div>
     </footer>

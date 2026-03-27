@@ -11,25 +11,46 @@ import {
   useCart,
   useMenuItems,
   usePlaceOrder,
+  useUpdateOrderStatus,
 } from "./hooks/useQueries";
 
 import AboutSection from "./components/AboutSection";
 import CartSidebar, { type CartDisplayItem } from "./components/CartSidebar";
+import ChatbotWidget from "./components/ChatbotWidget";
 import CheckoutModal from "./components/CheckoutModal";
 import ContactSection from "./components/ContactSection";
 import CustomerReviewsSection from "./components/CustomerReviewsSection";
 import FeaturesStrip from "./components/FeaturesStrip";
+import FoodQuotesSection from "./components/FoodQuotesSection";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import HelpButton from "./components/HelpButton";
 import HeroSection from "./components/HeroSection";
 import MenuSection from "./components/MenuSection";
+import MyOrdersModal from "./components/MyOrdersModal";
+import OwnerAccessModal from "./components/OwnerAccessModal";
 import OwnerPanel from "./components/OwnerPanel";
 import OwnerSection from "./components/OwnerSection";
+import ParticleBackground from "./components/ParticleBackground";
+import SparkleEffect from "./components/SparkleEffect";
 import SpecialOffersSection from "./components/SpecialOffersSection";
+import ThankYouSection from "./components/ThankYouSection";
 import WhatsAppButton from "./components/WhatsAppButton";
 
+function isOwnerPage() {
+  const hash = window.location.hash;
+  const search = window.location.search;
+  return (
+    hash === "#/owner-panel" ||
+    hash === "#/owner" ||
+    search.includes("owner") ||
+    search.includes("admin") ||
+    search.includes("panel")
+  );
+}
+
 function getPage() {
-  return window.location.hash === "#/owner" ? "owner" : "main";
+  return isOwnerPage() ? "owner" : "main";
 }
 
 export default function App() {
@@ -39,26 +60,48 @@ export default function App() {
   const addToCartMutation = useAddToCart();
   const placeOrderMutation = usePlaceOrder();
   const addMenuItemMutation = useAddMenuItem();
+  const updateOrderStatusMutation = useUpdateOrderStatus();
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState(getPage);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [myOrdersOpen, setMyOrdersOpen] = useState(false);
+  const [ownerModalOpen, setOwnerModalOpen] = useState(false);
   const [addingIds, setAddingIds] = useState<Set<string>>(new Set());
   const [localCart, setLocalCart] = useState<Map<string, number>>(new Map());
   const [seeded, setSeeded] = useState(false);
+  const [keyBuffer, setKeyBuffer] = useState("");
 
-  // Listen for hash changes to switch between main site and owner panel
   useEffect(() => {
     const onHashChange = () => setPage(getPage());
     window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
+    window.addEventListener("popstate", onHashChange);
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+      window.removeEventListener("popstate", onHashChange);
+    };
   }, []);
+
+  // Secret keyboard shortcut: type "owner" anywhere on the page -> show modal
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      const buf = (keyBuffer + e.key).slice(-5);
+      setKeyBuffer(buf);
+      if (buf === "owner") {
+        setKeyBuffer("");
+        setOwnerModalOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [keyBuffer]);
 
   const mutateAsync = addMenuItemMutation.mutateAsync;
   const invalidateQueries = queryClient.invalidateQueries.bind(queryClient);
 
-  // Seed menu items
   useEffect(() => {
     if (!actor || isFetching || menuLoading || seeded) return;
     if (menuItems.length === 0) {
@@ -95,7 +138,6 @@ export default function App() {
     invalidateQueries,
   ]);
 
-  // Sync local cart from backend cart
   useEffect(() => {
     const map = new Map<string, number>();
     for (const ci of cartItems) {
@@ -218,6 +260,17 @@ export default function App() {
     return orderId;
   };
 
+  const handleAutoConfirm = async (orderId: bigint) => {
+    try {
+      await updateOrderStatusMutation.mutateAsync({
+        orderId,
+        status: "Confirmed",
+      });
+    } catch (e) {
+      console.error("Auto-confirm failed:", e);
+    }
+  };
+
   const scrollToMenu = () => {
     document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -233,9 +286,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen" style={{ background: "#0B0F14" }}>
+      <ParticleBackground />
       <Toaster position="top-right" />
+      <SparkleEffect />
 
-      <Header cartCount={cartCount} onCartOpen={() => setCartOpen(true)} />
+      <Header
+        cartCount={cartCount}
+        onCartOpen={() => setCartOpen(true)}
+        onMyOrders={() => setMyOrdersOpen(true)}
+      />
 
       <main>
         <HeroSection
@@ -245,30 +304,26 @@ export default function App() {
           }}
           onViewMenu={scrollToMenu}
         />
-
         <SpecialOffersSection />
-
         <FeaturesStrip />
-
         <MenuSection
           menuItems={menuItems}
           localMenu={MENU_ITEMS}
           onAddToCart={handleAddToCart}
           addingIds={addingIds}
         />
-
         <AboutSection />
-
+        <FoodQuotesSection />
         <CustomerReviewsSection />
-
         <ContactSection />
       </main>
 
       <OwnerSection />
-
-      <Footer />
-
+      <ThankYouSection />
+      <Footer onOwnerAccess={() => setOwnerModalOpen(true)} />
       <WhatsAppButton />
+      <ChatbotWidget />
+      <HelpButton />
 
       <CartSidebar
         isOpen={cartOpen}
@@ -288,6 +343,23 @@ export default function App() {
         total={cartTotal}
         cartItems={checkoutCartItems}
         onPlaceOrder={handlePlaceOrder}
+        onTrackOrder={() => setMyOrdersOpen(true)}
+        onAutoConfirm={handleAutoConfirm}
+      />
+
+      <MyOrdersModal
+        isOpen={myOrdersOpen}
+        onClose={() => setMyOrdersOpen(false)}
+      />
+
+      <OwnerAccessModal
+        isOpen={ownerModalOpen}
+        onClose={() => setOwnerModalOpen(false)}
+        onSuccess={() => {
+          setOwnerModalOpen(false);
+          window.location.hash = "#/owner-panel";
+          setPage("owner");
+        }}
       />
     </div>
   );

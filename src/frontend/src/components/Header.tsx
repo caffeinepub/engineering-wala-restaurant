@@ -1,18 +1,37 @@
-import { Menu, ShoppingCart, X } from "lucide-react";
+import { ClipboardList, Menu, ShoppingCart, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRipple } from "../hooks/useRipple";
 
 interface HeaderProps {
   cartCount: number;
   onCartOpen: () => void;
+  onMyOrders: () => void;
 }
 
-export default function Header({ cartCount, onCartOpen }: HeaderProps) {
+export default function Header({
+  cartCount,
+  onCartOpen,
+  onMyOrders,
+}: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartAnim, setCartAnim] = useState(false);
+  const prevCount = useRef(cartCount);
+  const createRipple = useRipple();
+
+  useEffect(() => {
+    if (cartCount > prevCount.current) {
+      setCartAnim(true);
+      const t = setTimeout(() => setCartAnim(false), 500);
+      prevCount.current = cartCount;
+      return () => clearTimeout(t);
+    }
+    prevCount.current = cartCount;
+  }, [cartCount]);
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setMobileOpen(false);
+    setTimeout(() => setMobileOpen(false), 50);
   };
 
   return (
@@ -25,10 +44,19 @@ export default function Header({ cartCount, onCartOpen }: HeaderProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full btn-orange flex items-center justify-center font-display font-bold text-sm">
+          <motion.div
+            className="flex items-center gap-3"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div
+              className="w-10 h-10 rounded-full btn-orange flex items-center justify-center font-display font-bold text-sm"
+              whileHover={{ rotate: 10, scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            >
               EW
-            </div>
+            </motion.div>
             <div>
               <div className="font-display font-bold text-lg leading-tight">
                 <span className="text-orange">Engineering</span>
@@ -38,7 +66,7 @@ export default function Header({ cartCount, onCartOpen }: HeaderProps) {
                 Bhawarkua, Indore
               </div>
             </div>
-          </div>
+          </motion.div>
 
           <nav
             className="hidden md:flex items-center gap-6"
@@ -48,41 +76,90 @@ export default function Header({ cartCount, onCartOpen }: HeaderProps) {
               { label: "Menu", id: "menu" },
               { label: "About", id: "about" },
               { label: "Contact", id: "contact" },
-            ].map((item) => (
-              <button
+            ].map((item, i) => (
+              <motion.button
                 key={item.id}
                 type="button"
                 onClick={() => scrollTo(item.id)}
-                className="text-muted-foreground hover:text-orange transition-colors text-sm font-medium"
+                className="nav-link-anim text-muted-foreground hover:text-orange transition-colors text-sm font-medium"
                 data-ocid={`nav.${item.id}.link`}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.07, duration: 0.4 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {item.label}
-              </button>
+              </motion.button>
             ))}
+            <motion.button
+              type="button"
+              onClick={onMyOrders}
+              className="nav-link-anim flex items-center gap-1.5 text-muted-foreground hover:text-orange transition-colors text-sm font-medium"
+              data-ocid="nav.myorders.link"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.31, duration: 0.4 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ClipboardList size={15} />
+              My Orders
+            </motion.button>
           </nav>
 
           <div className="flex items-center gap-3">
-            <button
+            <motion.button
               type="button"
               onClick={onCartOpen}
-              className="relative flex items-center gap-2 btn-outline-orange px-3 py-2 rounded-lg text-sm"
+              onMouseDown={createRipple}
+              className="relative overflow-hidden flex items-center gap-2 btn-outline-orange px-3 py-2 rounded-lg text-sm"
               data-ocid="cart.open_modal_button"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35, duration: 0.4 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <ShoppingCart size={16} />
               <span className="hidden sm:inline">Cart</span>
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 w-5 h-5 btn-orange rounded-full text-xs flex items-center justify-center font-bold">
+                <span
+                  className={`absolute -top-2 -right-2 w-5 h-5 btn-orange rounded-full text-xs flex items-center justify-center font-bold ${
+                    cartAnim ? "ew-cart-pop" : ""
+                  }`}
+                >
                   {cartCount}
                 </span>
               )}
-            </button>
+            </motion.button>
             <button
               type="button"
               className="md:hidden text-muted-foreground hover:text-foreground"
               onClick={() => setMobileOpen(!mobileOpen)}
               data-ocid="nav.toggle"
             >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              <AnimatePresence mode="wait" initial={false}>
+                {mobileOpen ? (
+                  <motion.span
+                    key="x"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X size={20} />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Menu size={20} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </div>
@@ -103,17 +180,35 @@ export default function Header({ cartCount, onCartOpen }: HeaderProps) {
                 { label: "Menu", id: "menu" },
                 { label: "About", id: "about" },
                 { label: "Contact", id: "contact" },
-              ].map((item) => (
-                <button
+              ].map((item, i) => (
+                <motion.button
                   key={item.id}
                   type="button"
                   onClick={() => scrollTo(item.id)}
                   className="text-left text-foreground hover:text-orange transition-colors font-medium py-2"
                   data-ocid={`nav.${item.id}.link`}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.06 }}
                 >
                   {item.label}
-                </button>
+                </motion.button>
               ))}
+              <motion.button
+                type="button"
+                onClick={() => {
+                  onMyOrders();
+                  setTimeout(() => setMobileOpen(false), 50);
+                }}
+                className="text-left text-foreground hover:text-orange transition-colors font-medium py-2 flex items-center gap-2"
+                data-ocid="nav.myorders.link"
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.18 }}
+              >
+                <ClipboardList size={16} />
+                My Orders
+              </motion.button>
             </div>
           </motion.div>
         )}

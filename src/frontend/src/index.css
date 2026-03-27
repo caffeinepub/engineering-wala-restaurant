@@ -141,3 +141,230 @@
 .cart-sidebar.open {
   transform: translateX(0);
 }
+
+/* ============================================================
+   ANIMATION SYSTEM — Engineering Wala
+   ============================================================ */
+
+/* Ripple effect for button clicks */
+.ew-ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  transform: scale(0);
+  animation: ew-ripple 0.65s ease-out forwards;
+}
+
+@keyframes ew-ripple {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Nav link hover underline slide */
+.nav-link-anim {
+  position: relative;
+}
+.nav-link-anim::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #f29a2e;
+  border-radius: 2px;
+  transition: width 0.25s ease-out;
+}
+.nav-link-anim:hover::after {
+  width: 100%;
+}
+
+/* Shimmer / skeleton sweep */
+@keyframes ew-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.ew-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(242, 154, 46, 0.15) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: ew-shimmer 2.4s linear infinite;
+}
+
+/* Floating / bob animation */
+@keyframes ew-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.ew-float {
+  animation: ew-float 3s ease-in-out infinite;
+}
+
+/* Pulse glow ring */
+@keyframes ew-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0px rgba(242, 154, 46, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(242, 154, 46, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(242, 154, 46, 0);
+  }
+}
+.ew-pulse-ring {
+  animation: ew-pulse-ring 1.8s ease-out infinite;
+}
+
+/* Cart badge pop */
+@keyframes ew-cart-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.55);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.ew-cart-pop {
+  animation: ew-cart-pop 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+/* Sparkle dot burst on click */
+@keyframes ew-sparkle {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(1) rotate(180deg);
+    opacity: 0;
+  }
+}
+.ew-sparkle-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f29a2e;
+  pointer-events: none;
+  animation: ew-sparkle 0.6s ease-out forwards;
+  z-index: 9999;
+}
+
+/* Dish card hover glow */
+.dish-card-hover {
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+}
+.dish-card-hover:hover {
+  transform: translateY(-4px) scale(1.025);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(242, 154, 46, 0.18);
+}
+
+/* Offer card entrance */
+@keyframes ew-bounce-in {
+  0% {
+    transform: scale(0.7) translateY(30px);
+    opacity: 0;
+  }
+  65% {
+    transform: scale(1.05) translateY(-4px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Tracking step pulse */
+@keyframes ew-step-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(242, 154, 46, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(242, 154, 46, 0);
+  }
+}
+.ew-step-active {
+  animation: ew-step-glow 1.6s ease-in-out infinite;
+}
+
+/* Section fade-up (CSS-only fallback for prefers-reduced-motion) */
+@media (prefers-reduced-motion: reduce) {
+  .ew-ripple-effect,
+  .ew-shimmer,
+  .ew-float,
+  .ew-pulse-ring,
+  .ew-cart-pop,
+  .ew-sparkle-dot,
+  .ew-step-active {
+    animation: none !important;
+  }
+  .dish-card-hover:hover {
+    transform: none;
+  }
+  .nav-link-anim::after {
+    transition: none;
+  }
+}
+
+/* ── Antigravity floating food emojis (hero section) ── */
+@keyframes antigravity-rise {
+  0% {
+    transform: translateZ(0) translateY(0) translateX(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateZ(0) translateY(-45vh) translateX(18px);
+  }
+  55% {
+    transform: translateZ(0) translateY(-55vh) translateX(-14px);
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateZ(0) translateY(-110vh) translateX(8px);
+    opacity: 0;
+  }
+}
+
+.antigravity-float {
+  animation-name: antigravity-rise;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .antigravity-float {
+    animation: none !important;
+  }
+}

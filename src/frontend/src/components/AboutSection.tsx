@@ -26,7 +26,11 @@ const whyCards = [
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-20" style={{ background: "#0D1118" }}>
+    <section
+      id="about"
+      className="py-20"
+      style={{ background: "#0D1118", scrollMarginTop: "80px" }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -41,7 +45,7 @@ export default function AboutSection() {
           <p className="text-muted-foreground max-w-2xl mx-auto text-base leading-relaxed">
             Engineering Wala was born from a simple idea: that great food
             deserves the same precision and care as great engineering. Nestled
-            in the heart of Bhavarkua, Indore, we bring you authentic Indian
+            in the heart of Bhawarkua, Indore, we bring you authentic Indian
             flavors with a modern twist.
           </p>
         </motion.div>
@@ -53,14 +57,14 @@ export default function AboutSection() {
               icon: MapPin,
               title: "Our Location",
               lines: [
-                "Near Bhavarkua Square,",
+                "Near Bhawarkua Square,",
                 "Indore, Madhya Pradesh - 452010",
               ],
             },
             {
               icon: Phone,
               title: "Call Us",
-              lines: ["+91 98765 43210", "Available 10 AM - 11 PM"],
+              lines: ["+91 97132 25322", "Available 10 AM - 11 PM"],
             },
             {
               icon: Clock,

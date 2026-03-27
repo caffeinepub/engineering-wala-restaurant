@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { saveOrder } from "./MyOrdersModal";
 
 export interface CartItemDisplay {
   name: string;
@@ -23,6 +24,8 @@ interface CheckoutModalProps {
   total: number;
   cartItems: CartItemDisplay[];
   onPlaceOrder: (address: string, paymentMethod: string) => Promise<bigint>;
+  onTrackOrder: () => void;
+  onAutoConfirm: (orderId: bigint) => void;
 }
 
 type Step = "address" | "payment" | "confirmation";
@@ -74,6 +77,8 @@ export default function CheckoutModal({
   total,
   cartItems,
   onPlaceOrder,
+  onTrackOrder,
+  onAutoConfirm,
 }: CheckoutModalProps) {
   const [step, setStep] = useState<Step>("address");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("UPI");
@@ -129,24 +134,48 @@ export default function CheckoutModal({
     setIsPlacing(true);
     try {
       const fullAddress = `${form.name}, ${form.address}, ${form.city} - ${form.pincode}, Phone: ${form.phone}`;
-      const id = await onPlaceOrder(fullAddress, paymentMethod);
-      setOrderId(id);
-      setStep("confirmation");
 
-      // Send WhatsApp notification to owner
+      // 1. Send WhatsApp notification to owner FIRST (before confirmation)
       const phone = "919713225322";
       const itemsList = cartItems
         .map((i) => `  • ${i.name} x${i.quantity} = ₹${i.price * i.quantity}`)
         .join("\n");
+
+      // 2. Place order in backend
+      const id = await onPlaceOrder(fullAddress, paymentMethod);
+
+      // 3. Auto-confirm the order
+      onAutoConfirm(id);
+
+      // 4. Save order to localStorage for customer tracking
+      saveOrder({
+        orderId: String(id),
+        items: cartItems,
+        address: form.address,
+        city: form.city,
+        payment: paymentMethod,
+        subtotal: total,
+        deliveryFee,
+        discount: discountAmount,
+        promoCode: promoCode.toUpperCase(),
+        grandTotal,
+        placedAt: new Date().toISOString(),
+        status: "Confirmed",
+      });
+
+      setOrderId(id);
+      setStep("confirmation");
+
+      // 5. Send WhatsApp message to owner with full details
       const msg = [
-        `🍽️ NEW ORDER #EW-${String(id).padStart(4, "0")}`,
+        `🍽️ *NEW ORDER #EW-${String(id).padStart(4, "0")}* ✅ AUTO-CONFIRMED`,
         "",
-        `Customer: ${form.name}`,
-        `Phone: ${form.phone}`,
-        `Address: ${form.address}, ${form.city} - ${form.pincode}`,
-        `Payment: ${paymentMethod}`,
+        `👤 Customer: ${form.name}`,
+        `📞 Phone: ${form.phone}`,
+        `📍 Address: ${form.address}, ${form.city} - ${form.pincode}`,
+        `💳 Payment: ${paymentMethod}`,
         "",
-        "Items:",
+        "📋 Items Ordered:",
         itemsList,
         "",
         `Subtotal: ₹${total}`,
@@ -154,9 +183,11 @@ export default function CheckoutModal({
         ...(discountAmount > 0
           ? [`Promo (${promoCode.toUpperCase()}): -₹${discountAmount}`]
           : []),
-        `Grand Total: ₹${grandTotal}`,
+        `💰 *Grand Total: ₹${grandTotal}*`,
         "",
-        "Please confirm the order!",
+        `⏰ Placed at: ${new Date().toLocaleTimeString("en-IN")}`,
+        "",
+        "✅ Order is confirmed. Please prepare!",
       ].join("\n");
       window.open(
         `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,
@@ -642,9 +673,12 @@ export default function CheckoutModal({
                         #EW-
                         {orderId ? String(orderId).padStart(4, "0") : "0001"}
                       </p>
+                      <p className="text-xs text-green-500 mt-1 font-medium">
+                        ✅ Auto-Confirmed
+                      </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="grid grid-cols-2 gap-3 mb-4">
                       <div
                         className="p-3 rounded-xl border border-border/50"
                         style={{ background: "#171C22" }}
@@ -665,24 +699,36 @@ export default function CheckoutModal({
                       </div>
                     </div>
 
-                    <p className="text-sm text-muted-foreground mb-2">
+                    <p className="text-sm text-muted-foreground mb-1">
                       Delivering to:{" "}
                       <span className="text-foreground">
                         {form.address}, {form.city}
                       </span>
                     </p>
-                    <p className="text-xs text-green-500 mb-4">
-                      ✓ Order details sent to owner via WhatsApp
+                    <p className="text-xs text-green-500 mb-5">
+                      ✓ Owner notified via WhatsApp
                     </p>
 
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      className="btn-orange px-8 py-3 rounded-xl font-bold"
-                      data-ocid="checkout.confirm_button"
-                    >
-                      Track Your Order
-                    </button>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleClose();
+                          onTrackOrder();
+                        }}
+                        className="btn-orange flex-1 py-3 rounded-xl font-bold"
+                        data-ocid="checkout.track_order_button"
+                      >
+                        Track Your Order
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleClose}
+                        className="flex-1 py-3 rounded-xl font-bold border border-border/50 text-muted-foreground hover:text-foreground"
+                      >
+                        Close
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </div>

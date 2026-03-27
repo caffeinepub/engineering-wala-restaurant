@@ -1,27 +1,174 @@
 import { ChevronRight, Star } from "lucide-react";
 import { motion } from "motion/react";
+import { useRef } from "react";
+import { useRipple } from "../hooks/useRipple";
+import AnimatedNumber from "./AnimatedNumber";
 
 interface HeroSectionProps {
   onOrderNow: () => void;
   onViewMenu: () => void;
 }
 
+const STATS = [
+  { value: 5000, suffix: "+", label: "Happy Customers" },
+  { value: 70, suffix: "+", label: "Menu Items" },
+  { value: 4, suffix: ".8★", label: "Rating" },
+];
+
+// Antigravity floating food emojis — pure CSS, GPU-accelerated, no JS loop
+const FOOD_FLOATERS = [
+  {
+    id: "pizza",
+    emoji: "🍕",
+    left: "8%",
+    dur: "11s",
+    delay: "0s",
+    size: "1.6rem",
+    opacity: 0.22,
+  },
+  {
+    id: "burger",
+    emoji: "🍔",
+    left: "18%",
+    dur: "13s",
+    delay: "2.3s",
+    size: "1.4rem",
+    opacity: 0.18,
+  },
+  {
+    id: "taco",
+    emoji: "🌮",
+    left: "30%",
+    dur: "9s",
+    delay: "1.1s",
+    size: "1.7rem",
+    opacity: 0.2,
+  },
+  {
+    id: "noodles",
+    emoji: "🍜",
+    left: "42%",
+    dur: "14s",
+    delay: "4.5s",
+    size: "1.5rem",
+    opacity: 0.17,
+  },
+  {
+    id: "curry",
+    emoji: "🍛",
+    left: "55%",
+    dur: "10s",
+    delay: "0.7s",
+    size: "1.8rem",
+    opacity: 0.22,
+  },
+  {
+    id: "chicken",
+    emoji: "🍗",
+    left: "65%",
+    dur: "12s",
+    delay: "3.2s",
+    size: "1.4rem",
+    opacity: 0.19,
+  },
+  {
+    id: "pot",
+    emoji: "🥘",
+    left: "76%",
+    dur: "13s",
+    delay: "1.8s",
+    size: "1.6rem",
+    opacity: 0.21,
+  },
+  {
+    id: "bento",
+    emoji: "🍱",
+    left: "86%",
+    dur: "10s",
+    delay: "5s",
+    size: "1.5rem",
+    opacity: 0.17,
+  },
+  {
+    id: "salad",
+    emoji: "🥗",
+    left: "23%",
+    dur: "15s",
+    delay: "6s",
+    size: "1.3rem",
+    opacity: 0.15,
+  },
+  {
+    id: "stew",
+    emoji: "🍲",
+    left: "50%",
+    dur: "11s",
+    delay: "7.5s",
+    size: "1.4rem",
+    opacity: 0.16,
+  },
+];
+
 export default function HeroSection({
   onOrderNow,
   onViewMenu,
 }: HeroSectionProps) {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const createRipple = useRipple();
+
   return (
     <section
       className="relative min-h-screen flex items-center circuit-bg pt-16"
       id="home"
+      style={{ scrollMarginTop: "80px" }}
     >
+      {/* ── Antigravity floaters overlay ── */}
       <div
-        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-5"
+        className="absolute inset-0 overflow-hidden pointer-events-none"
+        aria-hidden="true"
+      >
+        {FOOD_FLOATERS.map((f) => (
+          <span
+            key={f.id}
+            className="antigravity-float"
+            style={{
+              position: "absolute",
+              left: f.left,
+              bottom: "-3rem",
+              fontSize: f.size,
+              opacity: f.opacity,
+              animationDuration: f.dur,
+              animationDelay: f.delay,
+              willChange: "transform",
+              transform: "translateZ(0)",
+            }}
+          >
+            {f.emoji}
+          </span>
+        ))}
+      </div>
+
+      {/* Ambient orbs */}
+      <motion.div
+        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-5 pointer-events-none"
         style={{ background: "radial-gradient(circle, #F29A2E, transparent)" }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.05, 0.09, 0.05] }}
+        transition={{
+          duration: 5,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+        }}
       />
-      <div
-        className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full opacity-5"
+      <motion.div
+        className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full opacity-5 pointer-events-none"
         style={{ background: "radial-gradient(circle, #F29A2E, transparent)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.08, 0.05] }}
+        transition={{
+          duration: 7,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+          delay: 2,
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -31,112 +178,180 @@ export default function HeroSection({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            <div
+            <motion.div
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-orange/30 text-orange text-xs font-medium mb-6"
               style={{ background: "rgba(242,154,46,0.08)" }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
             >
-              <Star size={12} fill="currentColor" />
+              <motion.span
+                animate={{ rotate: [0, 15, -10, 0] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatDelay: 3,
+                }}
+              >
+                <Star size={12} fill="currentColor" />
+              </motion.span>
               Indore's #1 Rated Restaurant
+            </motion.div>
+
+            <div className="font-display text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-4">
+              <motion.span
+                className="block text-orange"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                ENGINEERING
+              </motion.span>
+              <motion.span
+                className="block text-foreground"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.5 }}
+              >
+                WALA
+              </motion.span>
             </div>
 
-            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-4">
-              <span className="text-orange">ENGINEERING</span>
-              <br />
-              <span className="text-foreground">WALA</span>
-            </h1>
-
-            <p className="text-xl font-bold text-foreground mb-4">
+            <motion.p
+              className="text-xl font-bold text-foreground mb-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
+            >
               Indore's Most Deliciously Engineered Food!
-            </p>
+            </motion.p>
 
-            <p className="text-muted-foreground text-base mb-8 max-w-md leading-relaxed">
+            <motion.p
+              className="text-muted-foreground text-base mb-8 max-w-md leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.82, duration: 0.5 }}
+            >
               Authentic flavors crafted with precision. From smoky tandoor
               dishes to rich curries — every bite is engineered for perfection.
               Fresh ingredients, expert chefs, delivered to your door.
-            </p>
+            </motion.p>
 
-            <div className="flex flex-wrap gap-4">
-              <button
+            <motion.div
+              className="flex flex-wrap gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.95, duration: 0.5 }}
+            >
+              <motion.button
                 type="button"
                 onClick={onOrderNow}
-                className="btn-orange px-8 py-3.5 rounded-xl font-bold text-base flex items-center gap-2"
+                onMouseDown={createRipple}
+                className="relative overflow-hidden btn-orange px-8 py-3.5 rounded-xl font-bold text-base flex items-center gap-2"
                 data-ocid="hero.primary_button"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 0 28px rgba(242,154,46,0.5)",
+                }}
+                whileTap={{ scale: 0.96 }}
               >
-                Order Now <ChevronRight size={18} />
-              </button>
-              <button
+                Order Now
+                <motion.span
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatDelay: 1,
+                  }}
+                >
+                  <ChevronRight size={18} />
+                </motion.span>
+              </motion.button>
+              <motion.button
                 type="button"
                 onClick={onViewMenu}
-                className="btn-outline-orange px-8 py-3.5 rounded-xl font-bold text-base"
+                onMouseDown={createRipple}
+                className="relative overflow-hidden btn-outline-orange px-8 py-3.5 rounded-xl font-bold text-base"
                 data-ocid="hero.secondary_button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.96 }}
               >
                 View Menu
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
 
-            <div className="flex gap-8 mt-10 pt-8 border-t border-border/50">
-              {[
-                { value: "5000+", label: "Happy Customers" },
-                { value: "50+", label: "Menu Items" },
-                { value: "4.8★", label: "Average Rating" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-2xl font-display font-bold text-orange">
-                    {stat.value}
+            <motion.div
+              ref={statsRef}
+              className="flex gap-8 mt-10 pt-8 border-t border-border/50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.1, duration: 0.5 }}
+            >
+              {STATS.map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  className="text-center"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.15 + i * 0.1, duration: 0.4 }}
+                >
+                  <div className="text-2xl font-extrabold text-orange">
+                    {stat.suffix === ".8★" ? (
+                      <span>4.8★</span>
+                    ) : (
+                      <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                    )}
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5">
                     {stat.label}
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
 
+          {/* Right side decorative panel */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative flex items-center justify-center"
+            className="hidden lg:flex items-center justify-center"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
           >
-            <div className="relative w-80 h-80 sm:w-96 sm:h-96">
-              <div
-                className="absolute inset-0 rounded-full orange-glow"
-                style={{ border: "3px solid rgba(242,154,46,0.5)" }}
-              >
-                <img
-                  src="/assets/generated/hero-food.dim_1200x600.jpg"
-                  alt="Delicious food from Engineering Wala"
-                  className="w-full h-full rounded-full object-cover"
+            <motion.div
+              className="relative w-72 h-72 rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle at 40% 40%, rgba(242,154,46,0.18) 0%, rgba(242,154,46,0.04) 60%, transparent 100%)",
+                border: "1px solid rgba(242,154,46,0.2)",
+              }}
+              animate={{ rotate: 360 }}
+              transition={{
+                duration: 28,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "linear",
+              }}
+            >
+              {/* Orbiting dots */}
+              {[0, 60, 120, 180, 240, 300].map((deg) => (
+                <div
+                  key={deg}
+                  className="absolute w-2.5 h-2.5 rounded-full"
+                  style={{
+                    background: "#f29a2e",
+                    top: "50%",
+                    left: "50%",
+                    transform: `rotate(${deg}deg) translateX(130px) translateY(-50%)`,
+                    opacity: 0.5 + (deg / 300) * 0.5,
+                  }}
                 />
-              </div>
-              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full overflow-hidden border-2 border-orange/40 orange-glow">
-                <img
-                  src="/assets/generated/samosa.dim_400x300.jpg"
-                  alt="Samosa"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full overflow-hidden border-2 border-orange/40 orange-glow">
-                <img
-                  src="/assets/generated/gulab-jamun.dim_400x300.jpg"
-                  alt="Gulab Jamun"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute top-1/2 -right-10 w-16 h-16 rounded-full overflow-hidden border-2 border-orange/40">
-                <img
-                  src="/assets/generated/mango-lassi.dim_400x300.jpg"
-                  alt="Mango Lassi"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute top-1/2 -left-10 w-16 h-16 rounded-full overflow-hidden border-2 border-orange/40">
-                <img
-                  src="/assets/generated/naan.dim_400x300.jpg"
-                  alt="Naan"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              ))}
+            </motion.div>
+            {/* Center logo */}
+            <div
+              className="absolute w-28 h-28 rounded-full btn-orange flex items-center justify-center font-display font-bold text-3xl shadow-2xl ew-float"
+              style={{ boxShadow: "0 0 40px rgba(242,154,46,0.4)" }}
+            >
+              EW
             </div>
           </motion.div>
         </div>
