@@ -15,100 +15,6 @@ const STATS = [
   { value: 4, suffix: ".8★", label: "Rating" },
 ];
 
-// Antigravity floating food emojis — pure CSS, GPU-accelerated, no JS loop
-const FOOD_FLOATERS = [
-  {
-    id: "pizza",
-    emoji: "🍕",
-    left: "8%",
-    dur: "11s",
-    delay: "0s",
-    size: "1.6rem",
-    opacity: 0.22,
-  },
-  {
-    id: "burger",
-    emoji: "🍔",
-    left: "18%",
-    dur: "13s",
-    delay: "2.3s",
-    size: "1.4rem",
-    opacity: 0.18,
-  },
-  {
-    id: "taco",
-    emoji: "🌮",
-    left: "30%",
-    dur: "9s",
-    delay: "1.1s",
-    size: "1.7rem",
-    opacity: 0.2,
-  },
-  {
-    id: "noodles",
-    emoji: "🍜",
-    left: "42%",
-    dur: "14s",
-    delay: "4.5s",
-    size: "1.5rem",
-    opacity: 0.17,
-  },
-  {
-    id: "curry",
-    emoji: "🍛",
-    left: "55%",
-    dur: "10s",
-    delay: "0.7s",
-    size: "1.8rem",
-    opacity: 0.22,
-  },
-  {
-    id: "chicken",
-    emoji: "🍗",
-    left: "65%",
-    dur: "12s",
-    delay: "3.2s",
-    size: "1.4rem",
-    opacity: 0.19,
-  },
-  {
-    id: "pot",
-    emoji: "🥘",
-    left: "76%",
-    dur: "13s",
-    delay: "1.8s",
-    size: "1.6rem",
-    opacity: 0.21,
-  },
-  {
-    id: "bento",
-    emoji: "🍱",
-    left: "86%",
-    dur: "10s",
-    delay: "5s",
-    size: "1.5rem",
-    opacity: 0.17,
-  },
-  {
-    id: "salad",
-    emoji: "🥗",
-    left: "23%",
-    dur: "15s",
-    delay: "6s",
-    size: "1.3rem",
-    opacity: 0.15,
-  },
-  {
-    id: "stew",
-    emoji: "🍲",
-    left: "50%",
-    dur: "11s",
-    delay: "7.5s",
-    size: "1.4rem",
-    opacity: 0.16,
-  },
-];
-
 export default function HeroSection({
   onOrderNow,
   onViewMenu,
@@ -122,32 +28,6 @@ export default function HeroSection({
       id="home"
       style={{ scrollMarginTop: "80px" }}
     >
-      {/* ── Antigravity floaters overlay ── */}
-      <div
-        className="absolute inset-0 overflow-hidden pointer-events-none"
-        aria-hidden="true"
-      >
-        {FOOD_FLOATERS.map((f) => (
-          <span
-            key={f.id}
-            className="antigravity-float"
-            style={{
-              position: "absolute",
-              left: f.left,
-              bottom: "-3rem",
-              fontSize: f.size,
-              opacity: f.opacity,
-              animationDuration: f.dur,
-              animationDelay: f.delay,
-              willChange: "transform",
-              transform: "translateZ(0)",
-            }}
-          >
-            {f.emoji}
-          </span>
-        ))}
-      </div>
-
       {/* Ambient orbs */}
       <motion.div
         className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-5 pointer-events-none"

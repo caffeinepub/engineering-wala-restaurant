@@ -25,7 +25,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Marinated cottage cheese cubes grilled to perfection in tandoor oven | 6 pieces per plate",
     category: "Starters",
-    price: 130,
+    price: 120,
     image: "/assets/generated/paneer-tikka.dim_400x300.jpg",
     rating: 4.7,
     isVeg: true,
@@ -45,7 +45,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Tender chicken pieces marinated in yogurt and spices, grilled in tandoor | 6 pieces per plate",
     category: "Starters",
-    price: 160,
+    price: 150,
     image: "/assets/generated/chicken-tikka.dim_400x300.jpg",
     rating: 4.8,
     isVeg: false,
@@ -105,7 +105,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Half chicken marinated in yogurt and spices, roasted in clay oven | Half chicken | 5-6 pieces",
     category: "Starters",
-    price: 220,
+    price: 200,
     image: "/assets/generated/tandoori-chicken.dim_400x300.jpg",
     rating: 4.9,
     isVeg: false,
@@ -115,7 +115,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Crispy fried paneer cubes tossed in spicy Indo-Chinese chilli sauce | 8 pieces",
     category: "Starters",
-    price: 130,
+    price: 120,
     image: "/assets/generated/paneer-chilli.dim_400x300.jpg",
     rating: 4.7,
     isVeg: true,
@@ -137,7 +137,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Slow-cooked black lentils in creamy buttery tomato gravy | 1 bowl | Serves 1",
     category: "Main Course",
-    price: 120,
+    price: 110,
     image: "/assets/generated/dal-makhani.dim_400x300.jpg",
     rating: 4.6,
     isVeg: true,
@@ -147,7 +147,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Soft cottage cheese cubes in rich, velvety tomato-cashew gravy | 1 bowl | Serves 1",
     category: "Main Course",
-    price: 150,
+    price: 140,
     image: "/assets/generated/paneer-butter-masala.dim_400x300.jpg",
     rating: 4.7,
     isVeg: true,
@@ -157,7 +157,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Traditional home-style chicken curry with freshly ground masala | 1 bowl | 4-5 pieces",
     category: "Main Course",
-    price: 180,
+    price: 170,
     image: "/assets/generated/chicken-curry.dim_400x300.jpg",
     rating: 4.5,
     isVeg: false,
@@ -177,7 +177,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Paneer and bell peppers cooked in spicy kadai masala | 1 bowl | Serves 1",
     category: "Main Course",
-    price: 140,
+    price: 130,
     image: "/assets/generated/kadai-paneer.dim_400x300.jpg",
     rating: 4.6,
     isVeg: true,
@@ -185,7 +185,7 @@ export const MENU_ITEMS: MenuItemData[] = [
   {
     name: "Mutton Curry",
     category: "Main Course",
-    price: 250,
+    price: 230,
     image: "/assets/generated/mutton-curry.dim_400x300.jpg",
     rating: 4.8,
     isVeg: false,
@@ -247,7 +247,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Paneer in luxurious saffron-infused cashew cream gravy | 1 bowl | Serves 1",
     category: "Main Course",
-    price: 160,
+    price: 140,
     image: "/assets/generated/shahi-paneer.dim_400x300.jpg",
     rating: 4.8,
     isVeg: true,
@@ -289,7 +289,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Fragrant basmati rice layered with spiced chicken, saffron and fried onions | Full plate | Serves 1-2",
     category: "Rice & Biryani",
-    price: 180,
+    price: 170,
     image: "/assets/generated/biryani.dim_400x300.jpg",
     rating: 4.9,
     isVeg: false,
@@ -327,7 +327,7 @@ export const MENU_ITEMS: MenuItemData[] = [
   {
     name: "Mutton Biryani",
     category: "Rice & Biryani",
-    price: 240,
+    price: 220,
     image: "/assets/generated/mutton-biryani.dim_400x300.jpg",
     rating: 4.9,
     isVeg: false,
@@ -574,7 +574,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Chilled blended coffee with milk and ice cream, topped with chocolate | 300 ml glass",
     category: "Beverages",
-    price: 60,
+    price: 55,
     image: "/assets/generated/cold-coffee.dim_400x300.jpg",
     rating: 4.5,
     isVeg: true,
@@ -654,7 +654,7 @@ export const MENU_ITEMS: MenuItemData[] = [
   {
     name: "Chocolate Brownie",
     category: "Desserts",
-    price: 80,
+    price: 70,
     image: "/assets/generated/chocolate-brownie.dim_400x300.jpg",
     rating: 4.7,
     isVeg: true,
@@ -722,7 +722,7 @@ export const MENU_ITEMS: MenuItemData[] = [
     description:
       "Thick creamy shake blended with Oreo cookies, vanilla ice cream | 350ml glass",
     category: "Shakes",
-    price: 80,
+    price: 70,
     image: "/assets/generated/oreo-shake.dim_400x300.jpg",
     rating: 4.7,
     isVeg: true,
